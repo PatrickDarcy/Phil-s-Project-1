@@ -72,13 +72,13 @@ void Game::run()
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 			{
 				// Set Model Rotation
-				model = rotate(model, 0.01f, glm::vec3(0, 1, 0)); // Rotate
+				model = rotate(model, -0.01f, glm::vec3(0, 1, 0)); // Rotate
 			}
 
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 			{
 				// Set Model Rotation
-				model = rotate(model, -0.01f, glm::vec3(0, 1, 0)); // Rotate
+				model = rotate(model, 0.01f, glm::vec3(0, 1, 0)); // Rotate
 			}
 
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
