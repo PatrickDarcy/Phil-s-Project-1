@@ -68,23 +68,10 @@ void Game::run()
 			{
 				isRunning = false;
 			}
-
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
 			{
 				// Set Model Rotation
-				model = rotate(model, -0.01f, glm::vec3(0, 1, 0)); // Rotate
-			}
-
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-			{
-				// Set Model Rotation
-				model = rotate(model, 0.01f, glm::vec3(0, 1, 0)); // Rotate
-			}
-
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-			{
-				// Set Model Rotation
-				model = rotate(model, -0.01f, glm::vec3(1, 0, 0)); // Rotate
+				model += rotate(model, -0.01f, glm::vec3(1, 0, 0)); // Rotate
 			}
 
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
@@ -366,4 +353,10 @@ void Game::unload()
 	glDeleteBuffers(1, &vib);	//Delete Vertex Index Buffer
 	stbi_image_free(img_data);		//Free image
 }
+
+int Game::glGetMousePos(int & xpos, int & ypos)
+{
+	return 0;
+}
+
 
