@@ -1,12 +1,12 @@
 # README #
 
-This is LAB 12 which is the final lab within the lab series. Over the past few months we've created many different applications. This project defines an Cube, Vertex and Fragment Shaders, Texture and uses the GLM Math Library to perform transformations. As such its a completed 3D cube project with rotations.
+This is LAB 14 Project I StarterKit. This project defines an Cube, Vertex and Fragment Shaders, Texture and uses the GLM Math Library to perform transformations. As such its a completed 3D cube project with rotations.
 Modify this example and experiment with rotate, scale and translate functions (see https://glm.g-truc.net/0.9.2/api/a00245.html#ga4683c446c8432476750ade56f2537397)
 
 
 ### What is this repository for? ###
 
-* Lab 12 Experiment with a Cube Texturing All Sides Textured
+* Lab 14 Experiment with a Cube Texturing All Sides Textured
 
 ### How do I get set up? ###
 
@@ -39,9 +39,9 @@ http://www.sfml-dev.org/files/SFML-2.3.2-windows-vc14-32-bit.zip "SFML-2.3.2-win
 
 * Change to the projects directory by `cd projects`
 
-* Clone the project `git clone https://MuddyGames@bitbucket.org/MuddyGames/gameplay-programming-i-lab-12.git`
+* Clone the project `git clone https://MuddyGames@bitbucket.org/MuddyGames/gameplay-programming-i-lab-14.git`
 
-* Change to the project directory `cd projects gameplay-programming-i-lab-12`
+* Change to the project directory `cd projects gameplay-programming-i-lab14`
 
 * List files that were downloaded `ls`
 
