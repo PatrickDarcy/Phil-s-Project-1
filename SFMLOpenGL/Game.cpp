@@ -7,7 +7,7 @@ template <typename T>
 string toString(T number)
 {
 	ostringstream oss;
-	oss << number;
+//	oss << number;
 	return oss.str();
 }
 
@@ -399,9 +399,31 @@ void Game::update()
 	// To alter Camera modify view & projection
 	mvp = projection * view * model;
 
-	DEBUG_MSG(model[0].x);
+	/*DEBUG_MSG(model[0].x);
 	DEBUG_MSG(model[0].y);
 	DEBUG_MSG(model[0].z);
+*/
+	if (m_playerGravity == gravity::GROUNDED && sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+	{
+		model = translate(model, glm::vec3(0, -10, 0));
+		m_playerGravity = gravity::FALLING;
+	}
+	if (m_playerGravity == gravity::FALLING)
+	{
+		DEBUG_MSG(game_object[0]->getPosition().x);
+		DEBUG_MSG(game_object[0]->getPosition().y);
+		DEBUG_MSG(game_object[0]->getPosition().z);
+
+		model = translate(model, glm::vec3(0, -1, 0));
+		if (glm::all(glm::lessThanEqual(game_object[0]->getPosition(), glm::vec3(0,0,0))))
+		{
+			m_playerGravity = gravity::GROUNDED;
+		}
+	}
+	if (m_playerGravity == gravity::GROUNDED)
+	{
+		model = translate(model, glm::vec3(0, 0, 0));
+	}
 }
 
 void Game::render()

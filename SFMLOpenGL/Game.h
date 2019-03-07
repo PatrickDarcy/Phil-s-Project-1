@@ -33,8 +33,12 @@ public:
 	Game(sf::ContextSettings settings);
 	~Game();
 	void run();
+	void initialize();
+	void update();
+	void render();
+	void unload();
 private:
-	GameObject* game_object[2];
+	GameObject * game_object[2];
 	RenderWindow window;
 	Clock clock;
 	Time time;
@@ -42,10 +46,16 @@ private:
 	vec3 animation = vec3(0.0f);
 	float rotation = 0.0f;
 	bool isRunning = false;
-	void initialize();
-	void update();
-	void render();
-	void unload();
+
+	enum gravity 
+	{
+		JUMPING,
+		FALLING,
+		GROUNDED
+	};
+
+	gravity m_playerGravity = GROUNDED;
+
 };
 
 #endif  // ! GAME_H
