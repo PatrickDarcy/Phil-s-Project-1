@@ -164,18 +164,6 @@ void Game::run()
 			//	
 			}
 
-			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-			{
-				// Set Model Rotation
-				model = translate(model, glm::vec3(0, 30, 0)); // Rotate
-			}
-
-			if (game_object[0]->getPosition().y <= -5)
-			{
-				// Set Model Rotation
-				model += translate(model, glm::vec3(0, -9.8, 0)); // Rotate
-			}
-
 			if (animate)
 			{
 				rotation += (1.0f * rotation) + 0.05f;
@@ -399,23 +387,31 @@ void Game::update()
 	// To alter Camera modify view & projection
 	mvp = projection * view * model;
 
+	DEBUG_MSG(game_object[0]->getPosition().x);
+	DEBUG_MSG(game_object[0]->getPosition().y);
+	DEBUG_MSG(game_object[0]->getPosition().z);
+
 	/*DEBUG_MSG(model[0].x);
 	DEBUG_MSG(model[0].y);
 	DEBUG_MSG(model[0].z);
 */
 	if (m_playerGravity == gravity::GROUNDED && sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
 	{
-		model = translate(model, glm::vec3(0, -10, 0));
-		m_playerGravity = gravity::FALLING;
+		model = translate(model, glm::vec3(0, 0.1, 0));
+
+		if (game_object[0]->getPosition().y > 10)
+		{
+			m_playerGravity = gravity::FALLING;
+		}
 	}
 	if (m_playerGravity == gravity::FALLING)
 	{
-		DEBUG_MSG(game_object[0]->getPosition().x);
-		DEBUG_MSG(game_object[0]->getPosition().y);
-		DEBUG_MSG(game_object[0]->getPosition().z);
+		DEBUG_MSG(game_object[1]->getPosition().x);
+		DEBUG_MSG(game_object[1]->getPosition().y);
+		DEBUG_MSG(game_object[1]->getPosition().z);
 
-		model = translate(model, glm::vec3(0, -1, 0));
-		if (glm::all(glm::lessThanEqual(game_object[0]->getPosition(), glm::vec3(0,0,0))))
+		model = translate(model, glm::vec3(0, -0.098, 0));
+		if (game_object[1]->getPosition().y <= 0 )
 		{
 			m_playerGravity = gravity::GROUNDED;
 		}
