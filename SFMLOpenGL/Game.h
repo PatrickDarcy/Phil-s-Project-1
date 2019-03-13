@@ -56,6 +56,7 @@ private:
 
 	gravity m_playerGravity = GROUNDED;
 
+	bool m_spacePressed = false;
 };
 
 #endif  // ! GAME_H

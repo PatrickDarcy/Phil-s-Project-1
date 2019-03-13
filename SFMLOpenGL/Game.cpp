@@ -7,7 +7,7 @@ template <typename T>
 string toString(T number)
 {
 	ostringstream oss;
-//	oss << number;
+	oss << number;
 	return oss.str();
 }
 
@@ -31,7 +31,7 @@ GLenum	error;		// OpenGL Error Code
 
 
 //Please see .//Assets//Textures// for more textures
-const string filename = ".//Assets//Textures//grid_wip.tga";
+const string filename = ".//Assets//Textures//player.tga";
 
 int width;						// Width of texture
 int height;						// Height of texture
@@ -387,31 +387,28 @@ void Game::update()
 	// To alter Camera modify view & projection
 	mvp = projection * view * model;
 
-	DEBUG_MSG(game_object[0]->getPosition().x);
-	DEBUG_MSG(game_object[0]->getPosition().y);
-	DEBUG_MSG(game_object[0]->getPosition().z);
+	//DEBUG_MSG(game_object[0]->getPosition().x);
+	//DEBUG_MSG(game_object[0]->getPosition().y);
+	//DEBUG_MSG(game_object[0]->getPosition().z);
 
-	/*DEBUG_MSG(model[0].x);
-	DEBUG_MSG(model[0].y);
-	DEBUG_MSG(model[0].z);
-*/
-	if (m_playerGravity == gravity::GROUNDED && sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+	DEBUG_MSG(model[3].y);
+
+	if (m_playerGravity == gravity::GROUNDED && sf::Keyboard::isKeyPressed(sf::Keyboard::Space) || m_spacePressed)
 	{
-		model = translate(model, glm::vec3(0, 0.1, 0));
-
-		if (game_object[0]->getPosition().y > 10)
-		{
-			m_playerGravity = gravity::FALLING;
-		}
+		m_spacePressed = true;
+		model = translate(model, glm::vec3(0, 0.025, 0));
 	}
+
+	if (model[3].y > 8)
+	{
+		m_spacePressed = false;
+		m_playerGravity = gravity::FALLING;
+	}
+
 	if (m_playerGravity == gravity::FALLING)
 	{
-		DEBUG_MSG(game_object[1]->getPosition().x);
-		DEBUG_MSG(game_object[1]->getPosition().y);
-		DEBUG_MSG(game_object[1]->getPosition().z);
-
-		model = translate(model, glm::vec3(0, -0.098, 0));
-		if (game_object[1]->getPosition().y <= 0 )
+		model = translate(model, glm::vec3(0, -0.0098, 0));
+		if (model[3].y <= 0 )
 		{
 			m_playerGravity = gravity::GROUNDED;
 		}
