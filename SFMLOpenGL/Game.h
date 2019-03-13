@@ -17,6 +17,10 @@
 
 #include <Debug.h>
 
+#include "Player.h"
+#include "Obstacle.h"
+#include "Ground.h"
+
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
@@ -38,7 +42,9 @@ public:
 	void render();
 	void unload();
 private:
-	GameObject * game_object[2];
+	Player * player;
+	Obstacle * obstacle[40];
+	Ground * ground;
 	RenderWindow window;
 	Clock clock;
 	Time time;

@@ -23,9 +23,9 @@ GLint	positionID,	// Position ID
 		textureID,	// Texture ID
 		uvID,		// UV ID
 		mvpID,		// Model View Projection ID
-		x_offsetID, // X offset ID
-		y_offsetID,	// Y offset ID
-		z_offsetID;	// Z offset ID
+		x_OffsetID, // X offset ID
+		y_OffsetID,	// Y offset ID
+		z_OffsetID;	// Z offset ID
 
 GLenum	error;		// OpenGL Error Code
 
@@ -41,6 +41,9 @@ unsigned char* img_data;		// image data
 
 mat4 mvp, projection, 
 		view, model;			// Model View Projection
+
+mat4 gmvp, gprojection,
+		gview, gmodel;
 
 Font font;						// Game font
 
@@ -58,11 +61,17 @@ Game::Game(sf::ContextSettings settings) :
 	sf::Style::Default, 
 	settings)
 {
-	game_object[0] = new GameObject();
-	game_object[0]->setPosition(vec3(0.5f, 0.5f, -10.0f));
+	player = new Player();
+	player->setPosition(vec3(-3.0f, -1.0f, -5.0f));
 
-	game_object[1] = new GameObject();
-	game_object[1]->setPosition(vec3(0.8f, 0.8f, -6.0f));
+	ground = new Ground();
+	ground->setPosition(vec3(0.0f, -2.0f, 0.0f));
+
+	//for (int i = 0; i < 40; i++)
+	//{
+	//	obstacle[i] = new Obstacle();
+	//	obstacle[i]->setPosition(vec3((i * 2), -1.0f, -5.0f));
+	//}
 }
 
 Game::~Game()
@@ -205,9 +214,9 @@ void Game::initialize()
 
 	// Vertices (3) x,y,z , Colors (4) RGBA, UV/ST (2)
 
-	int countVERTICES = game_object[0]->getVertexCount();
-	int countCOLORS = game_object[0]->getColorCount();
-	int countUVS = game_object[0]->getUVCount();
+	int playerCountVERTICES = player->getVertexCount();
+	int playerCountCOLORS = player->getColorCount();
+	int playerCountUVS = player->getUVCount();
 
 	glBufferData(GL_ARRAY_BUFFER, ((3 * VERTICES) + (4 * COLORS) + (2 * UVS)) * sizeof(GLfloat), NULL, GL_STATIC_DRAW);
 
@@ -215,7 +224,7 @@ void Game::initialize()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vib);
 
 
-	int countINDICES = game_object[0]->getIndexCount();
+	int playerCountINDICES = player->getIndexCount();
 	// Indices to be drawn
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 3 * INDICES * sizeof(GLuint), indices, GL_STATIC_DRAW);
 
@@ -358,7 +367,7 @@ void Game::initialize()
 
 	// Camera Matrix
 	view = lookAt(
-		vec3(0.0f, 4.0f, 10.0f),	// Camera (x,y,z), in World Space
+		vec3(4.0f, 4.0f, 8.0f),	// Camera (x,y,z), in World Space
 		vec3(0.0f, 0.0f, 0.0f),		// Camera looking at origin
 		vec3(0.0f, 1.0f, 0.0f)		// 0.0f, 1.0f, 0.0f Look Down and 0.0f, -1.0f, 0.0f Look Up
 		);
@@ -387,6 +396,7 @@ void Game::update()
 	// To alter Camera modify view & projection
 	mvp = projection * view * model;
 
+	gmvp = gprojection * gview * gmodel;
 	//DEBUG_MSG(game_object[0]->getPosition().x);
 	//DEBUG_MSG(game_object[0]->getPosition().y);
 	//DEBUG_MSG(game_object[0]->getPosition().z);
@@ -436,19 +446,6 @@ void Game::render()
 	int x = Mouse::getPosition(window).x;
 	int y = Mouse::getPosition(window).y;
 
-	string hud = "Heads Up Display ["
-		+ string(toString(x))
-		+ "]["
-		+ string(toString(y))
-		+ "]";
-
-	Text text(hud, font);
-
-	text.setFillColor(sf::Color(255, 255, 255, 170));
-	text.setPosition(50.f, 50.f);
-
-	window.draw(text);
-
 	// Restore OpenGL render states
 	// https://www.sfml-dev.org/documentation/2.0/classsf_1_1RenderTarget.php#a8d1998464ccc54e789aaf990242b47f7
 
@@ -478,19 +475,19 @@ void Game::render()
 	mvpID = glGetUniformLocation(progID, "sv_mvp");
 	if (mvpID < 0) { DEBUG_MSG("mvpID not found"); }
 
-	x_offsetID = glGetUniformLocation(progID, "sv_x_offset");
-	if (x_offsetID < 0) { DEBUG_MSG("x_offsetID not found"); }
+	x_OffsetID = glGetUniformLocation(progID, "sv_x_offset");
+	if (x_OffsetID < 0) { DEBUG_MSG("x_offsetID not found"); }
 
-	y_offsetID = glGetUniformLocation(progID, "sv_y_offset");
-	if (y_offsetID < 0) { DEBUG_MSG("y_offsetID not found"); }
+	y_OffsetID = glGetUniformLocation(progID, "sv_y_offset");
+	if (y_OffsetID < 0) { DEBUG_MSG("y_offsetID not found"); }
 
-	z_offsetID = glGetUniformLocation(progID, "sv_z_offset");
-	if (z_offsetID < 0) { DEBUG_MSG("z_offsetID not found"); };
+	z_OffsetID = glGetUniformLocation(progID, "sv_z_offset");
+	if (z_OffsetID < 0) { DEBUG_MSG("z_offsetID not found"); };
 
 	// VBO Data....vertices, colors and UV's appended
 	// Add the Vertices for all your GameOjects, Colors and UVS
 	
-	glBufferSubData(GL_ARRAY_BUFFER, 0 * VERTICES * sizeof(GLfloat), 3 * VERTICES * sizeof(GLfloat), game_object[0]->getVertex());
+	glBufferSubData(GL_ARRAY_BUFFER, 0 * VERTICES * sizeof(GLfloat), 3 * VERTICES * sizeof(GLfloat), player->getVertex());
 	//glBufferSubData(GL_ARRAY_BUFFER, 0 * VERTICES * sizeof(GLfloat), 3 * VERTICES * sizeof(GLfloat), vertices);
 	glBufferSubData(GL_ARRAY_BUFFER, 3 * VERTICES * sizeof(GLfloat), 4 * COLORS * sizeof(GLfloat), colors);
 	glBufferSubData(GL_ARRAY_BUFFER, ((3 * VERTICES) + (4 * COLORS)) * sizeof(GLfloat), 2 * UVS * sizeof(GLfloat), uvs);
@@ -505,9 +502,11 @@ void Game::render()
 	// Set the X, Y and Z offset (this allows for multiple cubes via different shaders)
 	// Experiment with these values to change screen positions
 
-	glUniform1f(x_offsetID, game_object[0]->getPosition().x);
-	glUniform1f(y_offsetID, game_object[0]->getPosition().y);
-	glUniform1f(z_offsetID, game_object[0]->getPosition().z);
+	glUniform1f(x_OffsetID, player->getPosition().x);
+	glUniform1f(y_OffsetID, player->getPosition().y);
+	glUniform1f(z_OffsetID, player->getPosition().z);
+
+
 
 	/*glUniform1f(x_offsetID, 0.00f);
 	glUniform1f(y_offsetID, 0.00f);
@@ -526,6 +525,20 @@ void Game::render()
 
 	// Draw Element Arrays
 	glDrawElements(GL_TRIANGLES, 3 * INDICES, GL_UNSIGNED_INT, NULL);
+
+	//for (int i = 0; i < 40; i++)
+	//{
+	//	mvp = projection * view * mat4(translate(mat4(1.0f), obstacle[i]->getPosition()));
+	//	glUniformMatrix4fv(mvpID, 1, GL_FALSE, &mvp[0][0]);
+	//	glDrawElements(GL_TRIANGLES, 3 * INDICES, GL_UNSIGNED_INT, NULL);
+	//}
+
+
+	//draws ground
+		gmvp = gprojection * gview * mat4(translate(mat4(1.0f), ground->getPosition()));
+		glUniformMatrix4fv(mvpID, 1, GL_FALSE, &gmvp[0][0]);
+		glDrawElements(GL_TRIANGLES, 3 * INDICES, GL_UNSIGNED_INT, NULL);
+
 	window.display();
 
 	// Disable Arrays
