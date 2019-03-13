@@ -18,6 +18,7 @@ GLuint	vsid,		// Vertex Shader ID
 		vbo,		// Vertex Buffer ID
 		vib,		// Vertex Index Buffer
 		to[1];		// Texture ID
+
 GLint	positionID,	// Position ID
 		colorID,	// Color ID
 		textureID,	// Texture ID
@@ -25,13 +26,21 @@ GLint	positionID,	// Position ID
 		mvpID,		// Model View Projection ID
 		x_OffsetID, // X offset ID
 		y_OffsetID,	// Y offset ID
-		z_OffsetID;	// Z offset ID
+		z_OffsetID,	// Z offset ID
+		groundpositionID,	// Position ID
+		groundcolorID,	// Color ID
+		groundtextureID,	// Texture ID
+		grounduvID,		// UV ID
+		groundmvpID,		// Model View Projection ID
+		x_groundOffsetID, // X offset ID
+		y_groundOffsetID,	// Y offset ID
+		z_groundOffsetID;	// Z offset ID
 
 GLenum	error;		// OpenGL Error Code
 
 
 //Please see .//Assets//Textures// for more textures
-const string filename = ".//Assets//Textures//player.tga";
+const string playerTexture = ".//Assets//Textures//player.tga";
 
 int width;						// Width of texture
 int height;						// Height of texture
@@ -322,7 +331,7 @@ void Game::initialize()
 
 	// Set image data
 	// https://github.com/nothings/stb/blob/master/stb_image.h
-	img_data = stbi_load(filename.c_str(), &width, &height, &comp_count, 4);
+	img_data = stbi_load(playerTexture.c_str(), &width, &height, &comp_count, 4);
 
 	if (img_data == NULL)
 	{
