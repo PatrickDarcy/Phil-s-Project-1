@@ -41,12 +41,24 @@ public:
 	void update();
 	void render();
 	void unload();
+	GLboolean CheckPlayerAndObstacleCollision(Player &player, Obstacle &obstacle) // AABB - AABB collision
+	{
+		// Collision x-axis?
+		bool collisionX = player.getPosition().x + 2 >= obstacle.getPosition().x &&
+			obstacle.getPosition().x + 2 >= player.getPosition().x;
+		// Collision y-axis?
+		bool collisionY = player.getPosition().y + 2 >= obstacle.getPosition().y &&
+			obstacle.getPosition().y + 2 >= player.getPosition().y;
+		// Collision only if on both axes
+		return collisionX && collisionY;
+	}
 private:
 	Player * player;
 	Obstacle * obstacle[40];
-	Ground * ground;
+	Ground * ground[100];
 	RenderWindow window;
 	Clock clock;
+
 	Time time;
 	bool animate = false;
 	vec3 animation = vec3(0.0f);

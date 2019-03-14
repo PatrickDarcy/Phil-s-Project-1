@@ -73,14 +73,17 @@ Game::Game(sf::ContextSettings settings) :
 	player = new Player();
 	player->setPosition(vec3(-3.0f, -1.0f, -5.0f));
 
-	ground = new Ground();
-	ground->setPosition(vec3(0.0f, -2.0f, 0.0f));
+	for (int i = 0; i < 100; i++)
+	{
+		ground[i] = new Ground();
+		ground[i]->setPosition(vec3(0.0f, -2.0f, (i * -2) + 0.0f));
+	}
 
-	//for (int i = 0; i < 40; i++)
-	//{
-	//	obstacle[i] = new Obstacle();
-	//	obstacle[i]->setPosition(vec3((i * 2), -1.0f, -5.0f));
-	//}
+	for (int i = 0; i < 10; i++)
+	{
+		obstacle[i] = new Obstacle();
+		obstacle[i]->setPosition(vec3(0.0f, 0.0f, ((i * -16) + -16.0f)));
+	}
 }
 
 Game::~Game()
@@ -412,13 +415,44 @@ void Game::update()
 
 	DEBUG_MSG(model[3].y);
 
+	player->setPosition(player->getPosition() + glm::vec3(0.0, 0.0, 0.02));
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::F))
+	{
+		view = lookAt(
+			vec3(8.0f, -1.0f, 8.0f),	// Camera (x,y,z), in World Space
+			vec3(model[3].x, model[3].y, model[3].z),		// Camera looking at origin
+			vec3(0.0f, 1.0f, 0.0f));
+		
+	}
+	else
+	{
+		view = lookAt(
+			vec3(4.0f, 4.0f, 8.0f),	// Camera (x,y,z), in World Space
+			vec3(0.0f, 0.0f, 0.0f),		// Camera looking at origin
+			vec3(0.0f, 1.0f, 0.0f)		// 0.0f, 1.0f, 0.0f Look Down and 0.0f, -1.0f, 0.0f Look Up
+		);
+	}
+	
+	for (int i = 0; i < 10; i++)
+	{
+		if (CheckPlayerAndObstacleCollision(*player, *obstacle[i]))
+		{
+			std::cout << "Collision" << std::endl;
+			player->setPosition(glm::vec3(-3.0f, -1.0f, -5.0f));
+		}
+	}
+	model = translate(model, glm::vec3(0.0, 0, -0.02));
+	//view = translate(view, glm::vec3(0.0, 0.0, 0.02));
+
 	if (m_playerGravity == gravity::GROUNDED && sf::Keyboard::isKeyPressed(sf::Keyboard::Space) || m_spacePressed)
 	{
 		m_spacePressed = true;
 		model = translate(model, glm::vec3(0, 0.025, 0));
+		player->setPosition(player->getPosition() + glm::vec3(0, -0.025, 0));
 	}
 
-	if (model[3].y > 8)
+	if (model[3].y > 3.5)
 	{
 		m_spacePressed = false;
 		m_playerGravity = gravity::FALLING;
@@ -427,6 +461,7 @@ void Game::update()
 	if (m_playerGravity == gravity::FALLING)
 	{
 		model = translate(model, glm::vec3(0, -0.0098, 0));
+		player->setPosition(player->getPosition() + glm::vec3(0, 0.0098, 0));
 		if (model[3].y <= 0 )
 		{
 			m_playerGravity = gravity::GROUNDED;
@@ -435,6 +470,7 @@ void Game::update()
 	if (m_playerGravity == gravity::GROUNDED)
 	{
 		model = translate(model, glm::vec3(0, 0, 0));
+		player->setPosition(player->getPosition() + glm::vec3(0, 0.0, 0));
 	}
 }
 
@@ -535,18 +571,21 @@ void Game::render()
 	// Draw Element Arrays
 	glDrawElements(GL_TRIANGLES, 3 * INDICES, GL_UNSIGNED_INT, NULL);
 
-	//for (int i = 0; i < 40; i++)
-	//{
-	//	mvp = projection * view * mat4(translate(mat4(1.0f), obstacle[i]->getPosition()));
-	//	glUniformMatrix4fv(mvpID, 1, GL_FALSE, &mvp[0][0]);
-	//	glDrawElements(GL_TRIANGLES, 3 * INDICES, GL_UNSIGNED_INT, NULL);
-	//}
+	for (int i = 0; i < 100; i++)
+	{
+		mvp = projection * view * mat4(translate(mat4(1.0f), ground[i]->getPosition()));
+		glUniformMatrix4fv(mvpID, 1, GL_FALSE, &mvp[0][0]);
+		glDrawElements(GL_TRIANGLES, 3 * INDICES, GL_UNSIGNED_INT, NULL);
+	}
 
+	for (int i = 0; i < 10; i++)
+	{
+		mvp = projection * view * mat4(translate(mat4(1.0f), obstacle[i]->getPosition()));
+		glUniformMatrix4fv(mvpID, 1, GL_FALSE, &mvp[0][0]);
+		glDrawElements(GL_TRIANGLES, 3 * INDICES, GL_UNSIGNED_INT, NULL);
+	}
 
 	//draws ground
-		gmvp = gprojection * gview * mat4(translate(mat4(1.0f), ground->getPosition()));
-		glUniformMatrix4fv(mvpID, 1, GL_FALSE, &gmvp[0][0]);
-		glDrawElements(GL_TRIANGLES, 3 * INDICES, GL_UNSIGNED_INT, NULL);
 
 	window.display();
 
